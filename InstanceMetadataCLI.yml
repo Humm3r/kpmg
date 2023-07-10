@@ -1,0 +1,24 @@
+trigger:
+  branches:
+    include:
+      - InstanceMetadataCLI
+
+jobs:
+- job: QueryAzureMetadata
+  displayName: "Query Azure Metadata"
+  pool:
+    vmImage: 'ubuntu-latest'
+
+  steps:
+  - task: AzureCLI@2
+    inputs:
+      azureSubscription: 'CDS-NONP-->CDS-DMS-001-D-SC'
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        az login --identity
+        
+        metadata=$(az rest --method get --url 'http://169.254.169.254/metadata/instance?api-version=2021-02-01' | jq -r '. | to_entries | map("\(.key)\t\(.value)") | .[]')
+        echo -e "Metadata Property\tValue"
+        echo "$metadata"
+    displayName: 'Query Azure Metadata'
