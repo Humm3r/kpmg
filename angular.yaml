@@ -1,1 +1,24 @@
 #a sample angular app
+#a sample angular app
+trigger:
+  branches:
+    include:
+      - main
+      - Humm3r-patch-1
+
+jobs:
+- job: Build
+  displayName: 'Build and Test'
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '14.x'
+    displayName: 'Install Node.js'
+
+  - script: |
+      npm install
+      npm run build -- --prod
+    displayName: 'Build Angular app'
+
